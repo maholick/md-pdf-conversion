@@ -23,6 +23,8 @@ The docker setup uses:
 
 # Structure
 
+For using this container you need following structure.
+
 **./docker/**  
 Contains the Dockerfile for creating docker images.
 
@@ -30,15 +32,17 @@ Contains the Dockerfile for creating docker images.
 Contains the yaml config files for pandoc and the eisvogel latex template (metafile).
 
 **./docs/**  
-**./docs/assets/**  
+**./docs/assets/**  (optional)
 Contains all markdown files and and assets (e. g. images).
 
 **./output/**  
 Contains generated PDFs. Folder and file names can be changed in the config files.
 
 **./templates/**  
-Contains the eisvogel latex template, cplace page layout and cplace logo.
-The eisvolgel template can additionally be found on GitHub: [https://github.com/Wandmalfarbe/pandoc-latex-template](https://github.com/Wandmalfarbe/pandoc-latex-template)
+Contains the Eisvogel latex template, page layout and a logo.
+
+You can download the sample structure here [https://github.com/maholick/md-pdf-conversion/](https://github.com/maholick/md-pdf-conversion/)
+The Eisvogel template can additionally be found on GitHub: [https://github.com/Wandmalfarbe/pandoc-latex-template](https://github.com/Wandmalfarbe/pandoc-latex-template)
 
 # Usage
 
