@@ -1,0 +1,24 @@
+---
+title: "Example"
+author: [Shawn Maholick]
+date: "23.01.2022"
+subject: "None"
+keywords: [Example]
+subtitle: "Example Documentation"
+lang: "en"
+titlepage: true,
+titlepage-rule-color: "360049"
+titlepage-rule-height: 0
+titlepage-background: "templates/example-background.pdf"
+page-background: "templates/example-page-background.pdf"
+page-background-opacity: 1.0
+toc-own-page: true,
+#logo: ""
+#logo-width: 250px
+fontsize: 11pt
+
+fontfamily: opensans
+fontfamilyoptions: 
+- default
+- defaultsans
+...
