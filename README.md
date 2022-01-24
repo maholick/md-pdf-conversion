@@ -6,8 +6,7 @@ Description | Example setup using a docker container, latex, pandoc and the [Eis
 
 # Information
 
-This setup converts markdown files to beautiful PDFs using pandoc pandoc, texlive and the [Eisvogel](https://github.com/Wandmalfarbe/pandoc-latex-template) markdown template. Not all markdown flavors are
-supported to pandoc limitations, but vanilla markdown works like a charm.
+This setup converts Markdown files to beautiful PDFs using pandoc, TeX Live and the "Eisvogel](https://github.com/Wandmalfarbe/pandoc-latex-template)" Markdown template. Not all Markdown flavours are supported to pandoc limitations, but vanilla markdown works like a charm.
 
 The docker setup uses:
 
