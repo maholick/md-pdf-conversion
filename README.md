@@ -2,11 +2,11 @@
 Item | Value 
 --- | ---
 Developed by | Shawn Maholick
-Description | Example setup using a docker container, latex, pandoc and the [eisvogel](https://github.com/Wandmalfarbe/pandoc-latex-template) template to create beautiful PDFs.
+Description | Example setup using a docker container, latex, pandoc and the [Eisvogel](https://github.com/Wandmalfarbe/pandoc-latex-template) template to create beautiful PDFs.
 
 # Information
 
-This setup converts markdown files to beautiful PDFs using pandoc pandoc, texlive and the [Einsvolgel](https://github.com/Wandmalfarbe/pandoc-latex-template) markdown template. Not all markdown flavors are
+This setup converts markdown files to beautiful PDFs using pandoc pandoc, texlive and the [Eisvogel](https://github.com/Wandmalfarbe/pandoc-latex-template) markdown template. Not all markdown flavors are
 supported to pandoc limitations, but vanilla markdown works like a charm.
 
 The docker setup uses:
@@ -25,20 +25,20 @@ The docker setup uses:
 
 For using this container you need following structure.
 
-**./docker/**  
+**/docker**  
 Contains the Dockerfile for creating docker images.
 
-**./config/**  
+**/config**  
 Contains the yaml config files for pandoc and the eisvogel latex template (metafile).
 
-**./docs/**  
+**/docs**  
 **./docs/assets/**  (optional)
 Contains all markdown files and and assets (e. g. images).
 
-**./output/**  
+**/output**  
 Contains generated PDFs. Folder and file names can be changed in the config files.
 
-**./templates/**  
+**.templates/**  
 Contains the Eisvogel latex template, page layout and a logo.
 
 You can download the sample structure here [https://github.com/maholick/md-pdf-conversion/](https://github.com/maholick/md-pdf-conversion/)
