@@ -1,10 +1,9 @@
-# Document Control / Repository Information
+# Information
+
 Item | Value 
 --- | ---
 Developed by | Shawn Maholick
 Description | Example setup using a docker container, latex, pandoc and the [Eisvogel](https://github.com/Wandmalfarbe/pandoc-latex-template) template to create beautiful PDFs.
-
-# Information
 
 This setup converts Markdown files to beautiful PDFs using pandoc, TeX Live and the "Eisvogel](https://github.com/Wandmalfarbe/pandoc-latex-template)" Markdown template. Not all Markdown flavours are supported to pandoc limitations, but vanilla markdown works like a charm.
 
