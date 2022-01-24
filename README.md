@@ -38,7 +38,7 @@ Contains all markdown files and and assets (e. g. images).
 **/output**  
 Contains generated PDFs. Folder and file names can be changed in the config files.
 
-**.templates/**  
+**/templates**  
 Contains the Eisvogel latex template, page layout and a logo.
 
 You can download the sample structure here [https://github.com/maholick/md-pdf-conversion/](https://github.com/maholick/md-pdf-conversion/)
