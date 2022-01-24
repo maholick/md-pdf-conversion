@@ -34,8 +34,8 @@ Contains the yaml config files for pandoc and the eisvogel latex template (metaf
 **/docs**  
 Contains all markdown files and assets (e. g. images).
 
-**/docs/assets**  (optional) 
-Contains all files and assets (e. g. images or pdfs).
+**/docs/assets**  
+(optional) Contains all files and assets (e. g. images or pdfs).
 
 **/output**  
 Contains generated PDFs. Folder and file names can be changed in the config files.
