@@ -32,8 +32,10 @@ Contains the Dockerfile for creating docker images.
 Contains the yaml config files for pandoc and the eisvogel latex template (metafile).
 
 **/docs**  
+Contains all markdown files and assets (e. g. images).
+
 **/docs/assets**  (optional) 
-Contains all markdown files and and assets (e. g. images).
+Contains all files and assets (e. g. images or pdfs).
 
 **/output**  
 Contains generated PDFs. Folder and file names can be changed in the config files.
