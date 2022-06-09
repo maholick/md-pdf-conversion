@@ -1,0 +1,22 @@
+# This is a basic workflow that is manually triggered
+
+name: Manual workflow
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  workflow_dispatch:
+          
+jobs:
+  testbox:
+    runs-on: ubuntu-latest
+    container:
+      image: maholick/md-pdf-conversion:testing
+    steps:  
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Run Conversion
+      run: ./docs/*.md --defaults=config/pandoc.yaml 
+    - name: Add & Commit
+      uses: EndBug/add-and-commit@v9.0.0
+
