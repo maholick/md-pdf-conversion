@@ -1,6 +1,6 @@
 # Me excedere adfata superos
 
-![maholick.com](docs/assets/example.png)
+![maholick.com](docs/assets/example.png){ width=100px }
 <img align="left" >
 
 ## Agat sub
