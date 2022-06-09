@@ -28,3 +28,11 @@ jobs:
     # Runs a single command using the runners shell
     - name: Send greeting
       run: echo "Hello ${{ github.event.inputs.name }}"
+  container1:
+    runs-on: ubuntu-latest
+    container: maholick/md-pdf-conversion:testing
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          echo "Runs inside a container"
+  
