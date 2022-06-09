@@ -1,5 +1,5 @@
 # Download base image texlive/texlive
-FROM texlive/texlive
+FROM texlive/texlive:TL2021-historic
 
 # LABEL about the custom image
 LABEL maintainer="shawn@maholick.com"
