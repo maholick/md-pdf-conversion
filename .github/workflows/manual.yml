@@ -8,15 +8,15 @@ on:
   workflow_dispatch:
           
 jobs:
-  testbox:
-    runs-on: ubuntu-latest
+  Convert:
+    runs-on: ubuntu-20.04
     container:
       image: maholick/md-pdf-conversion:testing
     steps:  
     - name: Checkout
       uses: actions/checkout@v2
     - name: Run Conversion
-      run: ./docs/*.md --defaults=config/pandoc.yaml 
+      run: pandoc ./docs/*.md --defaults=config/pandoc.yaml 
     - name: Add & Commit
       uses: EndBug/add-and-commit@v9.0.0
 
