@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
           
 jobs:
-  testbox:
-    runs-on: ubuntu-20:04
+  Convert:
+    runs-on: ubuntu-20.04
     container:
       image: maholick/md-pdf-conversion:testing
     steps:  
