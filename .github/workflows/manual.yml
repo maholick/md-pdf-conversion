@@ -11,10 +11,12 @@ jobs:
   testbox:
     runs-on: ubuntu-latest
     container:
-      image: azul/zulu-openjdk-alpine:8-jre
+      image: maholick/md-pdf-conversion:testing
     steps:  
-    - uses: actions/checkout@v2
-    - name: What OS is running
-      run: uname -a
-    - name: What java version do we have
-      run: java -version
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Run Conversion
+      run: ls
+    - name: Add & Commit
+      uses: EndBug/add-and-commit@v9.0.0
+
