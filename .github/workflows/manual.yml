@@ -19,4 +19,6 @@ jobs:
       run: pandoc ./docs/*.md --defaults=config/pandoc.yaml 
     - name: Add & Commit
       uses: EndBug/add-and-commit@v9.0.0
+      - with:
+        pull: '--rebase --autostash'
 
