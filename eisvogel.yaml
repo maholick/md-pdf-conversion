@@ -1,0 +1,46 @@
+---
+# Title of the document
+title: "Markdown to PDF"
+
+# Author(s) of the document
+author: [maholick.com]
+
+# Date of the document
+date: ""
+
+# Subject of the document
+subject: ""
+
+# Keywords associated with the document
+keywords: [Example]
+
+# Subtitle or additional information about the document
+subtitle: "DocumentationHow To Convert Markdown to Beautiful PDF"
+
+# Language of the document
+lang: "en"
+
+# Whether to include a title page
+titlepage: true
+
+# Color of the title page rule
+titlepage-rule-color: "360049"
+
+# Height of the title page rule
+titlepage-rule-height: 0
+
+# Background image for the title page
+titlepage-background: "templates/example-background.pdf"
+
+# Background image for the pages
+page-background: "templates/example-page-background.pdf"
+
+# Opacity of the page background image
+page-background-opacity: 1.0
+
+# Whether to have a separate page for the table of contents
+toc-own-page: true
+
+# Font size of the document
+fontsize: 11pt
+...

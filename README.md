@@ -3,90 +3,117 @@
 Item | Value 
 --- | ---
 Developed by | Shawn Maholick
-Description | Example setup using a docker container, latex, pandoc and the [Eisvogel](https://github.com/Wandmalfarbe/pandoc-latex-template) template to create beautiful PDFs.
+Description | Example setup using a Docker container, LaTeX, pandoc and the [Eisvogel](https://github.com/Wandmalfarbe/pandoc-latex-template) template to create beautiful PDFs.
 
-This setup converts Markdown files to beautiful PDFs using pandoc, TeX Live and the "Eisvogel](https://github.com/Wandmalfarbe/pandoc-latex-template)" Markdown template. Not all Markdown flavours are supported to pandoc limitations, but vanilla markdown works like a charm.
+This setup converts Markdown files to beautiful PDFs using the pandoc/extra Docker image and the "Eisvogel](https://github.com/Wandmalfarbe/pandoc-latex-template)" Markdown template, which is included in pandoc/extra.
 
-The docker setup uses:
+Not all Markdown flavours are supported to pandoc limitations, but vanilla markdown works like a charm.
 
-- textlive/textlive docker image (Debian Bookworm / Testing)
-- pandoc 2.11.2
-- TeX Live (https://tug.org/texlive) version 2021 (with: texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra texlive-font-utils)
-- Eisvogel template 2.0.0
+# Setup Environment
+This setup converts Markdown files to beautiful PDFs using pandoc, TeX Live and the Eisvogel Markdown template within a docker container. Not all Markdown flavours are supported to pandoc limitations, but vanilla markdown works like a charm.
 
-# Requirements
+## Requirements
+You need following requirements fulfilled to get the environment running:
 
-- Docker
-- An x86_x64 compatible system (ARM not supported at the moment)
+- Your favorite text editor
+- An AMD64 based or Mac with ARM64 CPU
+- Docker Engine (see Setup Instructions)
 
-# Structure
+## Components
+For this tutorial we are using the pandoc/extra container version 3.1.1.0. Following components are included in the Docker image:
 
-For using this container you need following structure.
+- TeX Live 2022
+- Lua 5.4
+- Pandoc 3.1.1
+- Eisvogel Template 2.4.0
+- Alpine Linux 3.16
+(Ubuntu 22.04.4 LTS available: [pandoc/extra:3.1.1.0-ubuntu](https://hub.docker.com/layers/pandoc/extra/3.1.1.0-ubuntu/images/sha256-76aa5b4634c9db4b3f1b386fc6c39912ba132eb542bc23b4c48281b46f1a5423?context=explore))
 
-**/docker**  
-Contains the Dockerfile for creating docker images.
+# Using the Docker Image
+You can find the prebuilt Docker image ([pandoc/extra:3.1.1.0](https://hub.docker.com/layers/pandoc/extra/3.1.1.0-ubuntu/images/sha256-76aa5b4634c9db4b3f1b386fc6c39912ba132eb542bc23b4c48281b46f1a5423?context=explore)), which is based on the above mentioned repository, on Docker Hub.
 
-**/config**  
-Contains the yaml config files for pandoc and the eisvogel latex template (metafile).
+## Preparing Folder Structure
+I'm working with a simple folder structure for a clear and easy to use environment.
+Create and folder and make sure you have following structure:
 
-**/docs**  
-Contains all markdown files and assets (e. g. images).
+![Folder Structure](https://maholick.com/media/pages/blog/how-to-convert-markdown-to-beautiful-pdf/fb3078bcf8-1713114541/folder-structure.png)
 
-**/docs/assets**  
-Contains additional assets (e. g. images or pdfs) and is *(optional)*.
+| Folder/File           | Description                                                                                                 |
+|------------------|-------------------------------------------------------------------------------------------------------------|
+| **docs**             | Contains all markdown files and assets (e.g. images).                                                        |
+| **docs/assets**      | Contains additional assets (e.g. images or pdfs) and is _**optional**_.                                            |
+| **output**           | Contains generated PDFs. Folder and file names can be changed in the config files.                            |
+| **templates**        | Contains the page layout and a logo (e.g. PDF backgrounds etc.)                                              |
+| **pandoc.yaml**      | Contains all pandoc parameter, which we want to use. See [Pandoc Manual](https://pandoc.org/MANUAL.html#options) for all supported parameter/options.  |
+| **eisvogel.yaml**    | Contains all Eisvogel Template parameter, which we want to use. See [Wandmalfarbe/pandoc-latex-template](https://github.com/Wandmalfarbe/pandoc-latex-template?tab=readme-ov-file#custom-template-variables) for all supported template variables. |
 
-**/output**  
-Contains generated PDFs. Folder and file names can be changed in the config files.
+## Pulling the Image
 
-**/templates**  
-Contains the Eisvogel latex template, page layout and a logo.
+Download the image over the terminal/console by using the docker pull command:
 
-You can download the sample structure here [https://github.com/maholick/md-pdf-conversion/](https://github.com/maholick/md-pdf-conversion/)
-The Eisvogel template can additionally be found on GitHub: [https://github.com/Wandmalfarbe/pandoc-latex-template](https://github.com/Wandmalfarbe/pandoc-latex-template)
-
-# Usage
-
-Please clone the repo locally or if you are familar with GitHub Actions, you can use this setup
-to run automated PDF conversion directly on GitHub.
-
-## Build Docker Image
-
-From the cloned directory of the repo, build the docker image. This step only needs to be performed a single time.
-
+```bash
+[~] # docker pull pandoc/extra:3.1.1.0
 ```
-docker build -t md-pdf-conversion -f docker/Dockerfile .
-```
-
-## Setup Container
-
-Now, simply create a container using following command. Name of the container of cause can be changed.
-
-```
-docker run -v path/to/your/local/folder/:/var/opt/pandoc --name md-pdf-conversion maholick/md-pdf-conversion:latest
-```
-
-The container is checking the "./docs/" vor a __.start__ file and will start the conversion by converting all "*.md" files recursively and ordered,
-using the configuration in "./config/". 
-
-With the initial setup with default configs, a "example.pdf" in "./output/" will be generated or updated.
-
-Please make sure you first copy your markdown files to the conversion folder and then create the start-file (__.start__).
-
-### Successful conversion
-After a successful conversion the conversion folder will be emptied. Make sure that you only copy files here.
-
-### Unsuccessful conversion
-The start-file will be removed and you can check your config for errors.
-
-## Use Container
-
-For repeating conversion, just start the container.
-
-```
-docker start md-pdf-conversion
+You should see following output:
+```bash
+[~] # docker pull pandoc/extra:3.1.1.0
+3.1.1.0: Pulling from pandoc/extra
+ef5531b6e74e: Pull complete 
+4e821479e4b5: Pull complete 
+00f1e069c9e8: Pull complete 
+c6b7e74dbfd1: Pull complete 
+73732c6ec5a1: Pull complete 
+13d63ff5f1df: Pull complete 
+984e9b553bec: Pull complete 
+36f506d57a55: Pull complete 
+b4a7ca1217f5: Pull complete 
+057ddd0af801: Pull complete 
+0e8fc7fd216f: Pull complete 
+7a9e5ae8d256: Pull complete 
+3e228e84fa73: Pull complete 
+bc128267fb7a: Pull complete 
+8ba2c6e34513: Pull complete 
+331ae81764c8: Pull complete 
+291f71adec64: Pull complete 
+526ac1392c7e: Pull complete 
+bbf7689041b4: Pull complete 
+d5f22a0a9693: Pull complete 
+fbb2e6fff275: Pull complete 
+Digest: sha256:cc98998c5ab9a652b5c760d69c2fbf3395e063c6d0519890cd46dc3efbf9031a
+Status: Downloaded newer image for pandoc/extra:3.1.1.0
+docker.io/pandoc/extra:3.1.1.0
 ```
 
-# Prebuilt docker image
+## Run the Container
 
-You can also use the prebuilt docker image which can be found here [docker.io > md-pdf-conversion](https://hub.docker.com/r/maholick/md-pdf-conversion)
+After we prepared the folder structure and downloaded the image, we can run our example setup with docker run. 
 
+In this configuration I specified the platform linux/amd64, because I'm working on an MacBook with ARM CPU and there is currently no ARM container available.
+
+```
+docker run --rm \
+    --platform linux/amd64 \
+    --volume "$(pwd):/data" \
+    --user $(id -u):$(id -g) \
+    pandoc/extra:3.1.1.0 docs/*.md --defaults pandoc.yaml --metadata-file eisvogel.yaml
+```
+
+Please make sure that you specify the path to the docs directory, which is mentioned folder structure. Depending on your setup, you might need to specify options for pandoc and the "Eisvogel" template. 
+
+See [Pandoc](https://pandoc.org/MANUAL.html#options) and [Eisvogel](https://github.com/Wandmalfarbe/pandoc-latex-template?tab=readme-ov-file#custom-template-variables) manual.
+
+## Example Output
+After successfully running the container using the example setup, the example.pdf should be available in the output folder. 
+
+[![Output](https://maholick.com/media/pages/blog/how-to-convert-markdown-to-beautiful-pdf/d7785c092d-1713075479/examplepdf_success.png 'Example Output')](/output/example.pdf)
+
+# Ressources
+- Docker Setup Instructions (https://docs.docker.com/engine/install/)
+- Markdown Tutorial (https://daringfireball.net/projects/markdown/syntax#html)
+- Eisvogel LaTeX Template (https://github.com/Wandmalfarbe/pandoc-latex-template)
+- Pandoc Manual (https://pandoc.org/MANUAL.html#options)
+- Pandoc Extra Docker (https://hub.docker.com/r/pandoc/extra)
+
+# Contribution
+
+If you like this small project and want to contribute, please feel free to add code, templates or other improvements by creating pull requests with git. 

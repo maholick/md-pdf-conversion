@@ -1,0 +1,30 @@
+# Input format is markdown
+from: markdown
+
+# Output file path and name
+output-file: output/example.pdf
+
+# Use the "eisvogel" template for styling
+template: eisvogel
+
+# Set the link color to blue
+variables:
+    linkcolor: blue
+
+# Set the URL color to blue
+    urlcolor: blue
+
+# Include a table of contents
+table-of-contents: true
+
+# Set the depth of the table of contents to 2
+toc-depth: 2
+
+# Number the sections in the document
+number-sections: true
+
+# Enable syntax highlighting for code listings
+listings: true
+
+# Use reference-style links
+reference-links: true
