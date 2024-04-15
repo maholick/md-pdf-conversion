@@ -5,7 +5,7 @@ Item | Value
 Developed by | Shawn Maholick
 Description | Example setup using a Docker container, LaTeX, pandoc and the [Eisvogel](https://github.com/Wandmalfarbe/pandoc-latex-template) template to create beautiful PDFs.
 
-This setup converts Markdown files to beautiful PDFs using the pandoc/extra Docker image and the "Eisvogel](https://github.com/Wandmalfarbe/pandoc-latex-template)" Markdown template, which is included in pandoc/extra.
+This setup converts Markdown files to beautiful PDFs using the pandoc/extra Docker image and the [Eisvogel](https://github.com/Wandmalfarbe/pandoc-latex-template) Markdown template, which is included in pandoc/extra.
 
 Not all Markdown flavours are supported to pandoc limitations, but vanilla markdown works like a charm.
 
