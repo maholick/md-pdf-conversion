@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { exec } from 'child_process'
 import { promisify } from 'util'
 
 const execAsync = promisify(exec)
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Test if Docker is available
-    const { stdout, stderr } = await execAsync('docker --version')
+    const { stdout } = await execAsync('docker --version')
     
     // Test if pandoc image works
     const pandocTest = await execAsync('docker run --rm pandoc/extra:3.1.1.0 --version')

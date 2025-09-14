@@ -7,14 +7,12 @@ import { ConfigEditor, PandocConfig, EisvogelConfig } from '@/components/config-
 import { ConversionHistory, ConversionItem } from '@/components/conversion-history'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { 
   FileText, 
   Settings, 
-  AlertCircle, 
-  CheckCircle,
+  AlertCircle,
   Loader2,
   Upload,
   History,
@@ -162,7 +160,7 @@ export default function Home() {
       a.click()
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
-    } catch (err) {
+    } catch {
       setError('Failed to download file')
     }
   }
