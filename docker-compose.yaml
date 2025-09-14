@@ -1,0 +1,58 @@
+services:
+  # Frontend Next.js application
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PANDOC_CONTAINER=pandoc
+    volumes:
+      - workspace:/app/workspace
+      - ./generated-pdfs:/app/generated-pdfs
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - pdf-converter-network
+    depends_on:
+      - pandoc
+
+  # Pandoc conversion service
+  pandoc:
+    build:
+      context: ./pandoc
+      dockerfile: Dockerfile
+    volumes:
+      - workspace:/workspace
+      - ./templates:/templates:ro
+    networks:
+      - pdf-converter-network
+
+  # Development frontend with hot reload
+  frontend-dev:
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./frontend:/app
+      - workspace:/app/workspace
+      - ./generated-pdfs:/app/generated-pdfs
+    networks:
+      - pdf-converter-network
+    profiles:
+      - dev
+    depends_on:
+      - pandoc
+
+volumes:
+  workspace:
+    driver: local
+
+networks:
+  pdf-converter-network:
+    driver: bridge
