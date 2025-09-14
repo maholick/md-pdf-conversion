@@ -82,7 +82,7 @@ jobs:
           path: output/example.pdf
           retention-days: 7
 
-  test-docker compose-conversion:
+  test-docker-compose-conversion:
     name: Test Docker Compose Conversion
     runs-on: ubuntu-latest
 
