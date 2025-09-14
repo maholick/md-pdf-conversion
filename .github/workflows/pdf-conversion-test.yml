@@ -9,7 +9,7 @@ on:
       - 'pandoc.yaml'
       - 'eisvogel.yaml'
       - 'pandoc/**'
-      - 'docker-compose.yaml'
+      - 'docker compose.yaml'
       - '.github/workflows/pdf-conversion-test.yml'
   pull_request:
     branches: [ main ]
@@ -19,7 +19,7 @@ on:
       - 'pandoc.yaml'
       - 'eisvogel.yaml'
       - 'pandoc/**'
-      - 'docker-compose.yaml'
+      - 'docker compose.yaml'
       - '.github/workflows/pdf-conversion-test.yml'
   workflow_dispatch:  # Allow manual triggering
 
@@ -82,7 +82,7 @@ jobs:
           path: output/example.pdf
           retention-days: 7
 
-  test-docker-compose-conversion:
+  test-docker compose-conversion:
     name: Test Docker Compose Conversion
     runs-on: ubuntu-latest
 
@@ -91,16 +91,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build services
-        run: docker-compose build
+        run: docker compose build
 
       - name: Start pandoc service
         run: |
-          docker-compose up -d pandoc
+          docker compose up -d pandoc
           sleep 5  # Wait for service to be ready
 
       - name: Run conversion via Docker Compose
         run: |
-          docker-compose exec -T pandoc \
+          docker compose exec -T pandoc \
             pandoc /data/docs/*.md \
             --defaults /data/pandoc.yaml \
             --metadata-file /data/eisvogel.yaml \
@@ -113,7 +113,7 @@ jobs:
 
           if [ ! -f "output/example-compose.pdf" ]; then
             echo "Error: PDF file was not generated at output/example-compose.pdf"
-            docker-compose logs pandoc
+            docker compose logs pandoc
             exit 1
           fi
 
@@ -122,7 +122,7 @@ jobs:
 
       - name: Stop services
         if: always()
-        run: docker-compose down
+        run: docker compose down
 
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
@@ -141,14 +141,14 @@ jobs:
 
       - name: Start all services
         run: |
-          docker-compose up -d
+          docker compose up -d
           echo "Waiting for services to start..."
           sleep 15  # Wait for services to be ready
 
       - name: Check service health
         run: |
           # Check frontend is responding
-          curl -f http://localhost:3000 || (docker-compose logs frontend && exit 1)
+          curl -f http://localhost:3000 || (docker compose logs frontend && exit 1)
           echo "Frontend is running"
 
       - name: Test PDF conversion via API
@@ -179,7 +179,7 @@ jobs:
           if [ "$http_status" != "200" ]; then
             echo "API request failed with status: $http_status"
             echo "Response: $response"
-            docker-compose logs
+            docker compose logs
             exit 1
           fi
 
@@ -188,16 +188,16 @@ jobs:
       - name: Show service logs on failure
         if: failure()
         run: |
-          docker-compose logs frontend
-          docker-compose logs pandoc
+          docker compose logs frontend
+          docker compose logs pandoc
 
       - name: Stop services
         if: always()
-        run: docker-compose down
+        run: docker compose down
 
   compare-outputs:
     name: Compare PDF Outputs
-    needs: [test-direct-pandoc, test-docker-compose-conversion]
+    needs: [test-direct-pandoc, test-docker compose-conversion]
     runs-on: ubuntu-latest
 
     steps:
