@@ -7,10 +7,11 @@ Description | Example setup using a Docker container, LaTeX, pandoc and the [Eis
 
 This setup converts Markdown files to beautiful PDFs using the pandoc/extra Docker image and the [Eisvogel](https://github.com/Wandmalfarbe/pandoc-latex-template) Markdown template, which is included in pandoc/extra.
 
-Not all Markdown flavours are supported to pandoc limitations, but vanilla markdown works like a charm.
+Not all Markdown flavours are supported due to pandoc limitations, but vanilla markdown works like a charm.
+
 
 # Setup Environment
-This setup converts Markdown files to beautiful PDFs using pandoc, TeX Live and the Eisvogel Markdown template within a docker container. Not all Markdown flavours are supported to pandoc limitations, but vanilla markdown works like a charm.
+This setup converts Markdown files to beautiful PDFs using pandoc, TeX Live and the Eisvogel Markdown template within a docker container. Not all Markdown flavours are supported due to pandoc limitations, but vanilla markdown works like a charm.
 
 ## Requirements
 You need following requirements fulfilled to get the environment running:
@@ -107,7 +108,50 @@ After successfully running the container using the example setup, the example.pd
 
 [![Output](https://maholick.com/media/pages/blog/how-to-convert-markdown-to-beautiful-pdf/d7785c092d-1713075479/examplepdf_success.png 'Example Output')](/output/example.pdf)
 
-# Ressources
+# Web UI Interface (Alpha)
+
+> **⚠️ ALPHA VERSION**: The web interface is currently in alpha stage. Expect bugs, incomplete features, and breaking changes.
+
+## Web UI Overview
+
+A modern web interface is available in the `frontend` directory that provides a graphical way to convert Markdown files to PDF.
+
+### Features
+- Drag-and-drop file upload with reordering capability
+- Live configuration editing for Pandoc and Eisvogel settings
+- Automatic PDF generation and download
+- Real-time progress tracking and error handling
+- Multi-file batch processing
+
+### Requirements for Web UI
+- Docker and Docker Compose installed
+- Node.js 18+ (if running locally without Docker)
+- Modern web browser (Chrome, Firefox, Safari, Edge)
+- At least 2GB of available RAM
+- Port 3000 available for the frontend
+- Port 8080 available for the backend API
+
+### Quick Start with Docker Compose
+
+The easiest way to run the entire application:
+
+```bash
+# Start all services (frontend, backend, pandoc converter)
+docker-compose up -d
+
+# Access the web interface
+open http://localhost:3000
+
+# Stop all services
+docker-compose down
+```
+
+### Documentation
+- Web Interface Details: [Frontend README](frontend/README-frontend.md)
+- Docker Compose Configuration: See `docker-compose.yaml` in the project root
+- Frontend Development: See `frontend/` directory
+
+# Resources
 - Docker Setup Instructions (https://docs.docker.com/engine/install/)
 - Markdown Tutorial (https://daringfireball.net/projects/markdown/syntax#html)
 - Eisvogel LaTeX Template (https://github.com/Wandmalfarbe/pandoc-latex-template)
