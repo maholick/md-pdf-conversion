@@ -1,0 +1,36 @@
+# Generated files
+generated-pdfs/*
+output/*.pdf
+temp/*
+
+# Documentation
+CLAUDE.md
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
+frontend/temp/
+frontend/test.pdf
+
+# Environment files
+.env*
+
+# OS files
+.DS_Store
+*.pem
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
