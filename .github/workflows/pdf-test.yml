@@ -197,7 +197,7 @@ jobs:
 
   compare-outputs:
     name: Compare PDF Outputs
-    needs: [test-direct-pandoc, test-docker compose-conversion]
+    needs: [test-direct-pandoc, test-docker-compose-conversion]
     runs-on: ubuntu-latest
 
     steps:
