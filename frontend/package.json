@@ -22,7 +22,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "formidable": "^3.5.4",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "^4.1.1",
     "lucide-react": "^0.542.0",
     "next": "15.5.8",
     "react": "19.1.0",
