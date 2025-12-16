@@ -50,7 +50,9 @@ export async function POST(request: NextRequest) {
       'table-of-contents': pandocConfig.tableOfContents,
       'toc-depth': pandocConfig.tocDepth,
       'number-sections': pandocConfig.numberSections,
-      listings: pandocConfig.listings,
+      // Use new syntax-highlighting option (Pandoc 3.5+)
+      // 'listings' is deprecated, map to 'idiomatic' for LaTeX listings package
+      'syntax-highlighting': pandocConfig.listings ? 'idiomatic' : 'none',
       'reference-links': pandocConfig.referenceLinks
     }
     await writeFile(join(tempDir, 'pandoc.yaml'), yaml.dump(pandocYaml))

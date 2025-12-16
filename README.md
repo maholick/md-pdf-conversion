@@ -21,17 +21,17 @@ You need following requirements fulfilled to get the environment running:
 - Docker Engine (see Setup Instructions)
 
 ## Components
-For this tutorial we are using the pandoc/extra container version 3.1.1.0. Following components are included in the Docker image:
+For this tutorial we are using the pandoc/extra container version 3.5.0. Following components are included in the Docker image:
 
-- TeX Live 2022
+- TeX Live 2024
 - Lua 5.4
-- Pandoc 3.1.1
-- Eisvogel Template 2.4.0
-- Alpine Linux 3.16
-(Ubuntu 22.04.4 LTS available: [pandoc/extra:3.1.1.0-ubuntu](https://hub.docker.com/layers/pandoc/extra/3.1.1.0-ubuntu/images/sha256-76aa5b4634c9db4b3f1b386fc6c39912ba132eb542bc23b4c48281b46f1a5423?context=explore))
+- Pandoc 3.5
+- Eisvogel Template (latest version included)
+- Alpine Linux (latest)
+(Ubuntu variant also available: [pandoc/extra:3.5.0-ubuntu](https://hub.docker.com/r/pandoc/extra))
 
 # Using the Docker Image
-You can find the prebuilt Docker image ([pandoc/extra:3.1.1.0](https://hub.docker.com/layers/pandoc/extra/3.1.1.0-ubuntu/images/sha256-76aa5b4634c9db4b3f1b386fc6c39912ba132eb542bc23b4c48281b46f1a5423?context=explore)), which is based on the above mentioned repository, on Docker Hub.
+You can find the prebuilt Docker image ([pandoc/extra:3.5.0](https://hub.docker.com/r/pandoc/extra)), which is based on the above mentioned repository, on Docker Hub.
 
 ## Preparing Folder Structure
 I'm working with a simple folder structure for a clear and easy to use environment.
@@ -53,12 +53,12 @@ Create and folder and make sure you have following structure:
 Download the image over the terminal/console by using the docker pull command:
 
 ```bash
-[~] # docker pull pandoc/extra:3.1.1.0
+[~] # docker pull pandoc/extra:3.5.0
 ```
 You should see following output:
 ```bash
-[~] # docker pull pandoc/extra:3.1.1.0
-3.1.1.0: Pulling from pandoc/extra
+[~] # docker pull pandoc/extra:3.5.0
+3.5.0: Pulling from pandoc/extra
 ef5531b6e74e: Pull complete 
 4e821479e4b5: Pull complete 
 00f1e069c9e8: Pull complete 
@@ -81,8 +81,8 @@ bbf7689041b4: Pull complete
 d5f22a0a9693: Pull complete 
 fbb2e6fff275: Pull complete 
 Digest: sha256:cc98998c5ab9a652b5c760d69c2fbf3395e063c6d0519890cd46dc3efbf9031a
-Status: Downloaded newer image for pandoc/extra:3.1.1.0
-docker.io/pandoc/extra:3.1.1.0
+Status: Downloaded newer image for pandoc/extra:3.5.0
+docker.io/pandoc/extra:3.5.0
 ```
 
 ## Run the Container
@@ -96,7 +96,7 @@ docker run --rm \
     --platform linux/amd64 \
     --volume "$(pwd):/data" \
     --user $(id -u):$(id -g) \
-    pandoc/extra:3.1.1.0 docs/*.md --defaults pandoc.yaml --metadata-file eisvogel.yaml
+    pandoc/extra:3.5.0 docs/*.md --defaults pandoc.yaml --metadata-file eisvogel.yaml
 ```
 
 Please make sure that you specify the path to the docs directory, which is mentioned folder structure. Depending on your setup, you might need to specify options for pandoc and the "Eisvogel" template. 

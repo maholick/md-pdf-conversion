@@ -10,7 +10,7 @@ export async function GET() {
     const { stdout } = await execAsync('docker --version')
     
     // Test if pandoc image works
-    const pandocTest = await execAsync('docker run --rm pandoc/extra:3.1.1.0 --version')
+    const pandocTest = await execAsync('docker run --rm pandoc/extra:3.5.0 --version')
     
     return NextResponse.json({
       success: true,

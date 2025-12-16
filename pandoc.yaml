@@ -24,7 +24,8 @@ toc-depth: 2
 number-sections: true
 
 # Enable syntax highlighting for code listings
-listings: true
+# Note: 'listings' option is deprecated in Pandoc 3.5+, using 'syntax-highlighting' instead
+syntax-highlighting: idiomatic
 
 # Use reference-style links
 reference-links: true

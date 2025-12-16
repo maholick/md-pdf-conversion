@@ -18,7 +18,7 @@ A modern web interface for converting Markdown files to beautifully formatted PD
   - Start Docker Desktop on macOS/Windows
   - Or run `sudo systemctl start docker` on Linux
 - The parent directory must contain the `templates` folder with PDF backgrounds
-- The `pandoc/extra:3.1.1.0` Docker image (will be pulled automatically on first use)
+- The `pandoc/extra:3.5.0` Docker image (will be pulled automatically on first use)
 
 ## Installation
 

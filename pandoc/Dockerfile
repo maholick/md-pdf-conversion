@@ -1,4 +1,4 @@
-FROM pandoc/extra:3.1.1.0
+FROM pandoc/extra:3.5.0
 
 # Install fontconfig and available font packages from Alpine
 RUN apk add --no-cache \

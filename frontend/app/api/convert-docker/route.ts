@@ -60,7 +60,9 @@ export async function POST(request: NextRequest) {
       'table-of-contents': pandocConfig.tableOfContents,
       'toc-depth': pandocConfig.tocDepth,
       'number-sections': pandocConfig.numberSections,
-      listings: pandocConfig.listings,
+      // Use new syntax-highlighting option (Pandoc 3.5+)
+      // 'listings' is deprecated, map to 'idiomatic' for LaTeX listings package
+      'syntax-highlighting': pandocConfig.listings ? 'idiomatic' : 'none',
       'reference-links': pandocConfig.referenceLinks
     }
     await writeFile(join(hostTempDir, 'pandoc.yaml'), yaml.dump(pandocYaml))
@@ -86,7 +88,7 @@ export async function POST(request: NextRequest) {
     await writeFile(join(hostTempDir, 'eisvogel.yaml'), yaml.dump(eisvogelYaml))
     
     // Build Docker command
-    const dockerImage = process.env.PANDOC_DOCKER_IMAGE || 'pandoc/extra:3.1.1.0'
+    const dockerImage = process.env.PANDOC_DOCKER_IMAGE || 'pandoc/extra:3.5.0'
     const inputFiles = fileNames.map(f => `${containerDocsDir}/${f}`).join(' ')
     
     const dockerCommand = [
