@@ -6,6 +6,9 @@ temp/*
 # Documentation
 CLAUDE.md
 
+# Local Codex app state
+.codex/
+
 # Frontend
 frontend/node_modules/
 frontend/.next/
