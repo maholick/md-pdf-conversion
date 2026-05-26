@@ -13,7 +13,7 @@ A modern web interface for converting Markdown files to beautifully formatted PD
 
 ## Prerequisites
 
-- Node.js 18+ and npm
+- Node.js 22+ and npm
 - **Docker must be installed and running** (required for PDF conversion)
   - Start Docker Desktop on macOS/Windows
   - Or run `sudo systemctl start docker` on Linux

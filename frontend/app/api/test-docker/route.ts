@@ -1,16 +1,43 @@
 import { NextResponse } from 'next/server'
-import { exec } from 'child_process'
+import { execFile } from 'child_process'
 import { promisify } from 'util'
 
-const execAsync = promisify(exec)
+export const runtime = 'nodejs'
+
+const execFileAsync = promisify(execFile)
+const DOCKER_TIMEOUT_MS = 30_000
 
 export async function GET() {
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json(
+      { error: 'Not found' },
+      { status: 404 }
+    )
+  }
+
   try {
     // Test if Docker is available
-    const { stdout } = await execAsync('docker --version')
+    const { stdout } = await execFileAsync('docker', ['--version'], {
+      timeout: DOCKER_TIMEOUT_MS,
+      maxBuffer: 1024 * 1024
+    })
     
     // Test if pandoc image works
-    const pandocTest = await execAsync('docker run --rm pandoc/extra:3.5.0 --version')
+    const pandocTest = await execFileAsync('docker', [
+      'run',
+      '--rm',
+      '--network',
+      'none',
+      '--cap-drop',
+      'ALL',
+      '--security-opt',
+      'no-new-privileges',
+      'pandoc/extra:3.5.0',
+      '--version'
+    ], {
+      timeout: DOCKER_TIMEOUT_MS,
+      maxBuffer: 1024 * 1024
+    })
     
     return NextResponse.json({
       success: true,
@@ -22,8 +49,7 @@ export async function GET() {
     console.error('Docker test error:', error)
     return NextResponse.json({
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
-      details: error
+      error: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 })
   }
 }

@@ -1,13 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { writeFile, mkdir, readFile, rm } from 'fs/promises'
 import { join } from 'path'
-import { exec } from 'child_process'
+import { execFile } from 'child_process'
 import { promisify } from 'util'
 import { randomUUID } from 'crypto'
 import yaml from 'js-yaml'
 import os from 'os'
+import {
+  RequestValidationError,
+  booleanValue,
+  contentDispositionAttachment,
+  integerValue,
+  parseJsonObject,
+  prepareUploadedMarkdownFiles,
+  safeResolve,
+  sanitizePdfFileName,
+  stringArrayValue,
+  stringValue
+} from '@/lib/server/conversion-security'
 
-const execAsync = promisify(exec)
+export const runtime = 'nodejs'
+
+const execFileAsync = promisify(execFile)
+const DOCKER_TIMEOUT_MS = 120_000
 
 export async function POST(request: NextRequest) {
   const workspaceId = randomUUID()
@@ -24,16 +39,10 @@ export async function POST(request: NextRequest) {
   try {
     // Parse form data
     const formData = await request.formData()
-    const files = formData.getAll('files') as File[]
-    const pandocConfig = JSON.parse(formData.get('pandocConfig') as string)
-    const eisvogelConfig = JSON.parse(formData.get('eisvogelConfig') as string)
-    
-    if (files.length === 0) {
-      return NextResponse.json(
-        { error: 'No files provided' },
-        { status: 400 }
-      )
-    }
+    const files = await prepareUploadedMarkdownFiles(formData.getAll('files'))
+    const pandocConfig = parseJsonObject(formData.get('pandocConfig'), 'pandocConfig')
+    const eisvogelConfig = parseJsonObject(formData.get('eisvogelConfig'), 'eisvogelConfig')
+    const outputFile = sanitizePdfFileName(pandocConfig.outputFile)
     
     // Create temporary directories
     await mkdir(docsDir, { recursive: true })
@@ -42,78 +51,97 @@ export async function POST(request: NextRequest) {
     // Save uploaded markdown files
     const fileNames: string[] = []
     for (const file of files) {
-      const buffer = Buffer.from(await file.arrayBuffer())
-      const fileName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
-      await writeFile(join(docsDir, fileName), buffer)
-      fileNames.push(fileName)
+      await writeFile(join(docsDir, file.fileName), file.buffer)
+      fileNames.push(file.fileName)
     }
     
     // Create pandoc.yaml
     const pandocYaml = {
       from: 'markdown',
-      'output-file': `${containerOutputDir}/${pandocConfig.outputFile || 'output.pdf'}`,
+      'output-file': `${containerOutputDir}/${outputFile}`,
       template: 'eisvogel',
+      'pdf-engine': 'xelatex',
       variables: {
         linkcolor: 'blue',
         urlcolor: 'blue'
       },
-      'table-of-contents': pandocConfig.tableOfContents,
-      'toc-depth': pandocConfig.tocDepth,
-      'number-sections': pandocConfig.numberSections,
+      'table-of-contents': booleanValue(pandocConfig.tableOfContents, true),
+      'toc-depth': integerValue(pandocConfig.tocDepth, 2, 1, 6),
+      'number-sections': booleanValue(pandocConfig.numberSections, true),
       // Note: 'listings' is deprecated in Pandoc 3.5+ but still works in defaults files
       // 'syntax-highlighting' is not available in defaults files, so we use 'listings'
-      listings: pandocConfig.listings,
-      'reference-links': pandocConfig.referenceLinks
+      listings: booleanValue(pandocConfig.listings, true),
+      'reference-links': booleanValue(pandocConfig.referenceLinks, true)
     }
     await writeFile(join(hostTempDir, 'pandoc.yaml'), yaml.dump(pandocYaml))
     
     // Create eisvogel.yaml
     const eisvogelYaml = {
-      title: eisvogelConfig.title || 'Untitled Document',
-      author: [eisvogelConfig.author || 'Unknown'],
-      date: eisvogelConfig.date || new Date().toISOString().split('T')[0],
-      subject: eisvogelConfig.subject || '',
-      keywords: eisvogelConfig.keywords || [],
-      subtitle: eisvogelConfig.subtitle || '',
-      lang: eisvogelConfig.lang || 'en',
-      titlepage: eisvogelConfig.titlepage !== false,
+      title: stringValue(eisvogelConfig.title, 'Untitled Document'),
+      author: [stringValue(eisvogelConfig.author, 'Unknown')],
+      date: stringValue(eisvogelConfig.date, new Date().toISOString().split('T')[0], 40),
+      subject: stringValue(eisvogelConfig.subject, ''),
+      keywords: stringArrayValue(eisvogelConfig.keywords),
+      subtitle: stringValue(eisvogelConfig.subtitle, ''),
+      lang: stringValue(eisvogelConfig.lang, 'en', 20),
+      titlepage: booleanValue(eisvogelConfig.titlepage, true),
       'titlepage-rule-color': '360049',
       'titlepage-rule-height': 0,
       'titlepage-background': '/templates/example-background.pdf',
       'page-background': '/templates/example-page-background.pdf',
       'page-background-opacity': 1.0,
       'toc-own-page': true,
-      fontsize: eisvogelConfig.fontsize || '11pt'
+      fontsize: stringValue(eisvogelConfig.fontsize, '11pt', 10)
     }
     await writeFile(join(hostTempDir, 'eisvogel.yaml'), yaml.dump(eisvogelYaml))
     
     // Build Docker command
     const dockerImage = process.env.PANDOC_DOCKER_IMAGE || 'pandoc/extra:3.5.0'
-    const inputFiles = fileNames.map(f => `${containerDocsDir}/${f}`).join(' ')
-    
-    const dockerCommand = [
-      'docker run --rm',
-      '--platform linux/amd64',
-      `-v "${hostTempDir}:${containerWorkspace}"`,
-      `-v "${templatesDir}:/templates:ro"`,
-      os.platform() !== 'win32' ? `--user $(id -u):$(id -g)` : '',
+    const inputFiles = fileNames.map(f => `${containerDocsDir}/${f}`)
+    const dockerArgs = [
+      'run',
+      '--rm',
+      '--platform',
+      'linux/amd64',
+      '--network',
+      'none',
+      '--cap-drop',
+      'ALL',
+      '--security-opt',
+      'no-new-privileges',
+      '-e',
+      'HOME=/tmp',
+      '--tmpfs',
+      '/tmp:rw,nosuid,nodev,size=512m',
+      '-v',
+      `${hostTempDir}:${containerWorkspace}`,
+      '-v',
+      `${templatesDir}:/templates:ro`,
+      ...(os.platform() !== 'win32' && typeof process.getuid === 'function' && typeof process.getgid === 'function'
+        ? ['--user', `${process.getuid()}:${process.getgid()}`]
+        : []),
       dockerImage,
-      inputFiles,
-      `--defaults ${containerWorkspace}/pandoc.yaml`,
-      `--metadata-file ${containerWorkspace}/eisvogel.yaml`
-    ].filter(Boolean).join(' ')
+      ...inputFiles,
+      '--defaults',
+      `${containerWorkspace}/pandoc.yaml`,
+      '--metadata-file',
+      `${containerWorkspace}/eisvogel.yaml`
+    ]
     
-    console.log('Executing Docker command:', dockerCommand)
+    console.log('Executing Docker command:', ['docker', ...dockerArgs].join(' '))
     
     // Execute Docker command
-    const { stderr } = await execAsync(dockerCommand)
+    const { stderr } = await execFileAsync('docker', dockerArgs, {
+      timeout: DOCKER_TIMEOUT_MS,
+      maxBuffer: 10 * 1024 * 1024
+    })
     
     if (stderr && !stderr.includes('WARNING')) {
       console.error('Docker stderr:', stderr)
     }
     
     // Read the generated PDF
-    const pdfPath = join(outputDir, pandocConfig.outputFile || 'output.pdf')
+    const pdfPath = safeResolve(outputDir, outputFile)
     const pdfBuffer = await readFile(pdfPath)
     
     // Clean up temp directory
@@ -123,7 +151,8 @@ export async function POST(request: NextRequest) {
     return new NextResponse(new Blob([new Uint8Array(pdfBuffer)]), {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="${pandocConfig.outputFile || 'output.pdf'}"`
+        'Content-Disposition': contentDispositionAttachment(outputFile),
+        'X-Content-Type-Options': 'nosniff'
       }
     })
     
@@ -135,12 +164,15 @@ export async function POST(request: NextRequest) {
     
     console.error('API Error:', error)
     
+    const isValidationError = error instanceof RequestValidationError
+    const details = process.env.NODE_ENV === 'development' && error instanceof Error ? error.message : undefined
+
     return NextResponse.json(
-      { 
-        error: 'PDF conversion failed', 
-        details: error instanceof Error ? error.message : String(error)
+      {
+        error: isValidationError ? error.message : 'PDF conversion failed',
+        ...(details && { details })
       },
-      { status: 500 }
+      { status: isValidationError ? 400 : 500 }
     )
   }
 }

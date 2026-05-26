@@ -125,31 +125,34 @@ A modern web interface is available in the `frontend` directory that provides a 
 
 ### Requirements for Web UI
 - Docker and Docker Compose installed
-- Node.js 18+ (if running locally without Docker)
+- Node.js 22+ (if running locally without Docker)
 - Modern web browser (Chrome, Firefox, Safari, Edge)
 - At least 2GB of available RAM
 - Port 3000 available for the frontend
-- Port 8080 available for the backend API
 
 ### Quick Start with Docker Compose
 
 The easiest way to run the entire application:
 
 ```bash
-# Start all services (frontend, backend, pandoc converter)
-docker-compose up -d
+# Start the web converter
+docker compose up -d
 
 # Access the web interface
 open http://localhost:3000
 
 # Stop all services
-docker-compose down
+docker compose down
 ```
 
 ### Documentation
 - Web Interface Details: [Frontend README](frontend/README-frontend.md)
 - Docker Compose Configuration: See `docker-compose.yaml` in the project root
 - Frontend Development: See `frontend/` directory
+
+## Versioning
+
+Releases are tracked with GitHub Releases and plain semantic-version Git tags without a `v` prefix, for example `0.4.0`. Patch releases are used for compatible security and maintenance fixes, and the frontend package version should stay aligned with the repository release version.
 
 # Resources
 - Docker Setup Instructions (https://docs.docker.com/engine/install/)
@@ -160,4 +163,4 @@ docker-compose down
 
 # Contribution
 
-If you like this small project and want to contribute, please feel free to add code, templates or other improvements by creating pull requests with git. 
+If you like this small project and want to contribute, please feel free to add code, templates or other improvements by creating pull requests with git.

@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { readFile, access } from 'fs/promises'
 import { join } from 'path'
 import { constants } from 'fs'
+import {
+  contentDispositionAttachment,
+  isUuid,
+  sanitizePdfFileName
+} from '@/lib/server/conversion-security'
+
+export const runtime = 'nodejs'
 
 export async function GET(
   request: NextRequest,
@@ -9,7 +16,14 @@ export async function GET(
 ) {
   try {
     const { id: pdfId } = await params
-    const filename = request.nextUrl.searchParams.get('filename') || 'document.pdf'
+    if (!isUuid(pdfId)) {
+      return NextResponse.json(
+        { error: 'Invalid PDF id' },
+        { status: 400 }
+      )
+    }
+
+    const filename = sanitizePdfFileName(request.nextUrl.searchParams.get('filename'), 'document.pdf')
     
     // Construct the path to the stored PDF
     const pdfPath = join(process.cwd(), 'generated-pdfs', `${pdfId}.pdf`)
@@ -24,8 +38,9 @@ export async function GET(
     return new NextResponse(new Blob([new Uint8Array(pdfBuffer)]), {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="${filename}"`,
-        'Cache-Control': 'public, max-age=3600'
+        'Content-Disposition': contentDispositionAttachment(filename),
+        'Cache-Control': 'private, max-age=3600',
+        'X-Content-Type-Options': 'nosniff'
       }
     })
   } catch (error) {

@@ -6,19 +6,29 @@ name: Manual workflow
 # or API.
 on:
   workflow_dispatch:
+
+permissions:
+  contents: write
           
 jobs:
   Convert:
-    runs-on: ubuntu-20.04
-    container:
-      image: maholick/md-pdf-conversion:testing
+    runs-on: ubuntu-24.04
     steps:  
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v6
+    - name: Pull pandoc image
+      run: docker pull pandoc/extra:3.5.0
     - name: Run Conversion
-      run: pandoc ./docs/*.md --defaults=config/pandoc.yaml 
+      run: |
+        docker run --rm \
+          --platform linux/amd64 \
+          --volume "$(pwd):/data" \
+          --user "$(id -u):$(id -g)" \
+          pandoc/extra:3.5.0 \
+          docs/*.md \
+          --defaults pandoc.yaml \
+          --metadata-file eisvogel.yaml
     - name: Add & Commit
-      uses: EndBug/add-and-commit@v9.0.0
+      uses: EndBug/add-and-commit@v9.1.4
       with:
         pull: '--rebase --autostash'
-

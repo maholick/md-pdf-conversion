@@ -1,6 +1,7 @@
 services:
   # Frontend Next.js application
   frontend:
+    platform: linux/amd64
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -8,46 +9,48 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - PANDOC_CONTAINER=pandoc
+      - HOME=/tmp
     volumes:
       - workspace:/app/workspace
       - ./generated-pdfs:/app/generated-pdfs
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - pdf-converter-network
-    depends_on:
-      - pandoc
-
-  # Pandoc conversion service
-  pandoc:
-    build:
-      context: ./pandoc
-      dockerfile: Dockerfile
-    volumes:
-      - workspace:/workspace
       - ./templates:/templates:ro
     networks:
       - pdf-converter-network
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,size=512m
 
   # Development frontend with hot reload
   frontend-dev:
-    image: node:20-alpine
+    platform: linux/amd64
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     working_dir: /app
     command: sh -c "npm install && npm run dev"
     ports:
       - "3001:3000"
     environment:
       - NODE_ENV=development
+      - HOME=/tmp
     volumes:
       - ./frontend:/app
       - workspace:/app/workspace
       - ./generated-pdfs:/app/generated-pdfs
+      - ./templates:/templates:ro
     networks:
       - pdf-converter-network
     profiles:
       - dev
-    depends_on:
-      - pandoc
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,size=512m
 
 volumes:
   workspace:

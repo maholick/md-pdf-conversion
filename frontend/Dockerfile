@@ -1,5 +1,7 @@
 # Build stage
-FROM node:20-alpine AS builder
+ARG RUNTIME_PLATFORM=linux/amd64
+
+FROM --platform=$RUNTIME_PLATFORM node:22-alpine AS builder
 
 WORKDIR /app
 
@@ -15,13 +17,20 @@ COPY . .
 # Build the application
 RUN npm run build
 
+FROM --platform=$RUNTIME_PLATFORM node:22-alpine AS node-runtime
+
 # Production stage
-FROM node:20-alpine AS runner
+FROM --platform=$RUNTIME_PLATFORM pandoc/extra:3.5.0 AS runner
 
 WORKDIR /app
 
-# Install Docker CLI only (for docker exec to pandoc container)
-RUN apk add --no-cache docker-cli
+RUN apk add --no-cache libstdc++
+
+# Copy the supported Node.js runtime into the Pandoc image.
+COPY --from=node-runtime /usr/local/bin/node /usr/local/bin/node
+COPY --from=node-runtime /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
+    ln -sf /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
 
 # Copy built application from builder
 COPY --from=builder /app/.next ./.next
@@ -33,12 +42,10 @@ COPY --from=builder /app/public ./public
 RUN mkdir -p /app/workspace /app/generated-pdfs && \
     chmod -R 777 /app/workspace /app/generated-pdfs
 
-# Run as root to access Docker socket
-# In production, consider using Docker API instead
-
 EXPOSE 3000
 
-ENV PORT 3000
-ENV NODE_ENV production
+ENV PORT=3000
+ENV NODE_ENV=production
 
+ENTRYPOINT []
 CMD ["npm", "start"]
